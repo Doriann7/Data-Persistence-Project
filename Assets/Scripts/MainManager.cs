@@ -10,14 +10,13 @@ public class MainManager : MonoBehaviour
     public int LineCount = 6;
     public Rigidbody Ball;
 
-    public Text ScoreText;
+    public Text ScoreText, bestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
-
     
     // Start is called before the first frame update
     void Start()
@@ -36,6 +35,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        bestScoreText.text = "Best Score : " + DataManager.Instance.bestPlayerName + " : " + DataManager.Instance.bestScore;
     }
 
     private void Update()
@@ -55,6 +56,15 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            // Si on bat le meilleur score
+            if (m_Points > DataManager.Instance.bestScore)
+            {
+                DataManager.Instance.bestScore = m_Points;
+                DataManager.Instance.bestPlayerName = DataManager.Instance.playerName;
+                bestScoreText.text = "Best Score : " + DataManager.Instance.playerName + " : " + DataManager.Instance.bestScore;
+                DataManager.Instance.Save();
+            }
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
